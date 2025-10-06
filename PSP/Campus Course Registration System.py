@@ -56,6 +56,33 @@ def main_menu():
 def course_menu():
     while True:
         print("\n==== Course Management ====")
+        print("1. Add Course")
+        print("2. Modify Course")
+        print("3. Delete Course")
+        print("4. Back to Main Menu")
+        choice = input('Enter your choice (1-4): ')
+        if choice == '1':
+            add_course()
+        elif choice == '2':
+            modify_course()
+        elif choice == '3':
+            delete_course()()
+        elif choice == '4':
+            break
+        else:
+            print('Invalid choice!')
+
+def add_course():
+    cid = input('Enter course code: ')  #(cid refers to course id)
+    if cid in course_codes:
+        print('Course code already exists!')
+        return
+    name = input('Enter Course Name: ')
+    cap = int(input('Enter Course Id: ')) #(cap refers to the capacity of students in course)
+    prereq = input('Enter Course Prerequisites: ')
+    courses[cid] = {'name': name, 'cap': cap, 'prereq': prereq, 'registered': [], 'waitlist': []}
+    course_codes.add(cid)
+    print(f"Course '{name}' added!")
 
 
 
