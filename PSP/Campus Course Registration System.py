@@ -24,3 +24,11 @@ def has_prerequisites(student_id, course_id):
     student = students_db[student_id]
     course = courses_db[course_id]
     return course['prerequisites'].issubset(student['completed_courses'])
+
+def time_conflict(student_id, course_id):
+    """Check for time conflict between existing and new course."""
+    new_time = courses_db[course_id]['schedule_time']
+    for c_id in students_db[student_id]['current_schedule']:
+        if courses_db[c_id]['schedule_time'] == new_time:
+            return True
+    return False
