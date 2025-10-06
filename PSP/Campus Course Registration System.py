@@ -32,7 +32,7 @@ def main_menu():
         print("1. Course Management")
         print("2. Student Management")
         print("3. Registration Management")
-        print("4. Reports & Searches")
+        print("4. Reports")
         print("5. Exit")
         choice = input('Enter your choice (1-5): ')
         if choice == '1':
