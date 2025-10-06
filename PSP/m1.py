@@ -1,4 +1,3 @@
-# Creating dictionary for all the courses
 courses_db = {}
 students_db = {}
 def add_courses(courses_id, name, capacity, time, prerequisites=set()):
