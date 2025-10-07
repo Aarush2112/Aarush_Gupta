@@ -14,7 +14,7 @@ def login():
     password = input('Enter your password: ')
     if username == USERNAME and password == PASSWORD:
         print('\nLogin Successful! Welcome, Admin 🙂')
-        # main_menu()
+        main_menu()
     else:
         print('Invalid username or password.')
 
@@ -88,17 +88,6 @@ def add_course():
 
 
 '''
-def add_course(course_id, name, capacity, schedule_time, prerequisites=set()):
-    """Add a new course to the course database."""
-    courses[course_id] = {
-        'name': name,
-        'capacity': capacity,
-        'schedule_time': schedule_time,
-        'prerequisites': set(prerequisites),
-        'enrolled_students': set(),
-        'waitlist': []
-    }
-
 def add_student(student_id, name, completed_courses=set()):
     """Add a new student to the student database."""
     students[student_id] = {
