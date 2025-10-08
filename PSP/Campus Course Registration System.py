@@ -42,7 +42,7 @@ def main_menu():
         elif choice == '3':
             registration_menu()
         elif choice == '4':
-            report_menu()
+            reports_menu()
         elif choice == '5':
             print('Goodbye! 👋')
             break
@@ -211,6 +211,70 @@ def drop_course():
     else:
         print("Student not registered in this course.")
 
+
+# -----------------------------
+# Reports
+# -----------------------------
+def reports_menu():
+    while True:
+        print("\n==== Reports ====")
+        print("1. Report by Course")
+        print("2. Report by Student")
+        print("3. Search Course")
+        print("4. Calculate Available Seats")
+        print("5. Back to Main Menu")
+        choice = input('Enter your choice (1-5): ')
+
+        if choice == '1':
+            generate_report_by_course()
+        elif choice == '2':
+            generate_report_by_student()
+        elif choice == '3':
+            search_course()
+        elif choice == '4':
+            calculate_available_seats()
+        elif choice == '5':
+            break
+        else:
+            print("Invalid choice.")
+
+def generate_report_by_course():
+    cid = input("Enter course code: ")
+    if cid in courses:
+        c = courses[cid]
+        print(f"\nCourse: {cid} - {c['name']}")
+        print(f"Registered: {c['registered']}")
+        print(f"Waitlist: {c['waitlist']}")
+    else:
+        print("Course not found.")
+
+def generate_report_by_student():
+    sid = input("Enter student ID: ")
+    if sid in students:
+        s = students[sid]
+        print(f"\nStudent: {sid} - {s['name']}")
+        print(f"Registered courses: {list(s['courses'])}")
+    else:
+        print("Student not found.")
+
+def search_course():
+    query = input("Enter course code or name to search: ").lower()
+    found = False
+    for cid, data in courses.items():
+        if query in cid.lower() or query in data['name'].lower():
+            print(f"{cid} - {data['name']}")
+            found = True
+    if not found:
+        print("No matching courses found.")
+
+def calculate_available_seats():
+    cid = input("Enter course code: ")
+    if cid in courses:
+        c = courses[cid]
+        available = c['capacity'] - len(c['registered'])
+        print(f"Available seats in {cid}: {available}")
+    else:
+        print("Course not found.")
 
 if __name__ == "__main__":
     login()
