@@ -44,7 +44,7 @@ def main_menu():
         elif choice == '4':
             reports_menu()
         elif choice == '5':
-            print('Goodbye! 👋')
+            print('\nGoodbye! 👋')
             break
         else:
             print('Invalid choice!')
@@ -73,14 +73,15 @@ def course_menu():
             print('Invalid choice!')
 
 def add_course():
-    cid = input('Enter course code: ')  #(cid refers to course id)
+    cid = input('Enter Course Code: ')
     if cid in course_codes:
         print('Course code already exists!')
         return
     name = input('Enter Course Name: ')
-    cap = int(input('Enter Course Capacity: ')) #(cap refers to the capacity of students in course)
-    prereq = input('Enter Course Prerequisites: ')
-    courses[cid] = {'name': name, 'cap': cap, 'prereq': prereq, 'registered': [], 'waitlist': []}
+    cap = int(input('Enter Course Capacity: '))
+    prereq_input = input('Enter Course Prerequisites (Leave blank for no prerequisites): ')
+    prereq = tuple(p.strip() for p in prereq_input.split(',')) if prereq_input else ()
+    courses[cid] = {'name': name, 'capacity': cap, 'prereq': prereq, 'registered': [], 'waitlist': []}
     course_codes.add(cid)
     print(f"Course '{name}' added!")
 
@@ -126,7 +127,7 @@ def student_menu():
             print('Invalid choice!')
 
 def add_student():
-    sid = input('Enter Student ID: ')  #(sid refers to student id)
+    sid = input('Enter Student ID: ')
     if sid in students:
         print('Student ID already exists!')
         return
@@ -202,7 +203,7 @@ def drop_course():
         courses[cid]['registered'].remove(sid)
         students[sid]['courses'].discard(cid)
 
-        if courses[cid]['waitlist']: # Promote from waitlist if available
+        if courses[cid]['waitlist']:
             next_sid = courses[cid]['waitlist'].pop(0)
             courses[cid]['registered'].append(next_sid)
             students[next_sid]['courses'].add(cid)
