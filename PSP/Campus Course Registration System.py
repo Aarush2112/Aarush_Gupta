@@ -66,7 +66,7 @@ def course_menu():
         elif choice == '2':
             modify_course()
         elif choice == '3':
-            delete_course()()
+            delete_course()
         elif choice == '4':
             break
         else:
@@ -78,38 +78,80 @@ def add_course():
         print('Course code already exists!')
         return
     name = input('Enter Course Name: ')
-    cap = int(input('Enter Course Id: ')) #(cap refers to the capacity of students in course)
+    cap = int(input('Enter Course Capacity: ')) #(cap refers to the capacity of students in course)
     prereq = input('Enter Course Prerequisites: ')
     courses[cid] = {'name': name, 'cap': cap, 'prereq': prereq, 'registered': [], 'waitlist': []}
     course_codes.add(cid)
     print(f"Course '{name}' added!")
 
+def modify_course():
+    cid = input('Enter course code: ')
+    if cid in courses:
+        new_cap = int(input('Enter new Capacity: '))
+        courses[cid]['capacity'] = new_cap
+        print('Course updated!')
+    else:
+        print('Course not found!')
+
+def delete_course():
+    cid = input('Enter course code: ')
+    if cid in courses:
+        del courses[cid]
+        course_codes.remove(cid)
+        print('Course DELETED!')
+    else:
+        print('Course not found!')
 
 
+# -----------------------------
+# Student Management
+# -----------------------------
+def student_menu():
+    while True:
+        print("\n==== Student Management ====")
+        print("1. Add Student")
+        print("2. Modify Student")
+        print("3. Delete Student")
+        print("4. Back to Main Menu")
+        choice = input('Enter your choice (1-4): ')
+        if choice == '1':
+            add_student()
+        elif choice == '2':
+            modify_student()
+        elif choice == '3':
+            delete_student()
+        elif choice == '4':
+            break
+        else:
+            print('Invalid choice!')
 
-'''
-def add_student(student_id, name, completed_courses=set()):
-    """Add a new student to the student database."""
-    students[student_id] = {
-        'name': name,
-        'completed_courses': set(completed_courses),
-        'current_schedule': set()
-    }
+def add_student():
+    sid = input('Enter Student ID: ')  #(sid refers to student id)
+    if sid in students:
+        print('Student ID already exists!')
+        return
+    name = input('Enter Student Name: ')
+    students[sid] = {'name': name, 'courses': set(), 'completed': set()}
+    student_ids.add(sid)
+    print(f"Student added!")
 
-def has_prerequisites(student_id, course_id):
-    """Check if a student meets the course prerequisites."""
-    student = students[student_id]
-    course = courses[course_id]
-    return course['prerequisites'].issubset(student['completed_courses'])
+def modify_student():
+    sid = input('Enter Student ID: ')
+    if sid in students:
+        new_name = input('Enter new Name: ')
+        students[sid]['name'] = new_name
+        print('Student Details updated!')
+    else:
+        print('Student not found!')
 
-def time_conflict(student_id, course_id):
-    """Check for time conflict between existing and new course."""
-    new_time = courses[course_id]['schedule_time']
-    for c_id in students[student_id]['current_schedule']:
-        if courses[c_id]['schedule_time'] == new_time:
-            return True
-    return False
-'''
+def delete_student():
+    sid = input('Enter Student ID: ')
+    if sid in students:
+        del students[sid]
+        student_ids.remove(sid)
+        print('Student Details DELETED!')
+    else:
+        print('Student not found!')
 
 if __name__ == "__main__":
     login()
