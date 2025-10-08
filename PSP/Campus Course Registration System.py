@@ -153,5 +153,64 @@ def delete_student():
     else:
         print('Student not found!')
 
+
+# -----------------------------
+# Registration Management
+# -----------------------------
+def registration_menu():
+    while True:
+        print("\n==== Registration Management ====")
+        print("1. Register Student for Course")
+        print("2. Drop Course")
+        print("3. Back to Main Menu")
+        choice = input('Enter your choice (1-3): ')
+        if choice == '1':
+            register_student()
+        elif choice == '2':
+            drop_course()
+        elif choice == '3':
+            break
+        else:
+            print('Invalid choice!')
+
+def register_student():
+    sid = input('Enter Student ID: ')
+    cid = input('Enter Course code: ')
+    if sid not in students or cid not in courses:
+        print('Invalid Student ID or Course Code!')
+        return
+
+    course = courses[cid]
+    prereq_ok = all(p in students[sid]['completed'] for p in course['prereq'])
+    if not prereq_ok:
+        print('Student does not meet Prerequisites!')
+        return
+
+    if len(course['registered']) < course['capacity']:
+        course['registered'].append(sid)
+        students[sid]['courses'].add(cid)
+        print(f"Student {sid} Registered in {cid}.")
+    else:
+        course['waitlist'].append(sid)
+        print(f"Course full. Student {sid} added to waitlist.")
+
+def drop_course():
+    sid = input("Enter Student ID: ")
+    cid = input("Enter Course code: ")
+
+    if cid in courses and sid in courses[cid]['registered']:
+        courses[cid]['registered'].remove(sid)
+        students[sid]['courses'].discard(cid)
+
+        if courses[cid]['waitlist']: # Promote from waitlist if available
+            next_sid = courses[cid]['waitlist'].pop(0)
+            courses[cid]['registered'].append(next_sid)
+            students[next_sid]['courses'].add(cid)
+            print(f"{next_sid} moved from waitlist to registered.")
+        print("Course dropped successfully.")
+    else:
+        print("Student not registered in this course.")
+
+
 if __name__ == "__main__":
     login()
