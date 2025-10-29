@@ -1,7 +1,3 @@
-# Name: Aarush Gupta
-# Enrollment Number: 2502140001
-# Smart Course Registration System (Password Encrypted)
-
 USERNAME = 'admin'
 PASSWORD = 'admin123'
 
