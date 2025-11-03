@@ -15,6 +15,10 @@ It provides an interactive, menu-driven interface for administrators to handle s
 Add, modify, and delete courses with unique course codes.
 - Feature 2: **Student Management**  
 Register new students, assign unique student IDs, and update records.
+- Feature 3: **Registration Management**  
+Enroll students into courses while checking for existing course capacity or duplicates.
+- Feature 4: **Reports & Summary**  
+View all course and student details and generate enrollment summaries.
 
 ## 🔧 Installation & Usage  
 1. Clone the repository:  
