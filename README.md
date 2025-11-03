@@ -1,3 +1,3 @@
-# Aarush_Gupta
+# Aarush Gupta
 
 Author -  Aarush Gupta
