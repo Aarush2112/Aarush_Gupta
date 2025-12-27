@@ -32,4 +32,5 @@ It provides an interactive, menu-driven interface for administrators to handle s
    git clone https://github.com/Aarush2112/Aarush_Gupta.git
    cd Aarush_Gupta
 2. Run the application:
+   ```bash
    python Course_Management_System_With_SQLite.py
