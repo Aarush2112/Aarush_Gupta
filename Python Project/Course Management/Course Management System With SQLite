@@ -1,0 +1,399 @@
+import sqlite3
+
+# -----------------------------
+# Database Setup
+# -----------------------------
+crs = sqlite3.connect("course_registration_system.db")
+cursor = crs.cursor()
+
+def init_db():
+    # Course Table
+    cursor.execute("""CREATE TABLE IF NOT EXISTS courses (
+        cid TEXT PRIMARY KEY,
+        name TEXT,
+        capacity INTEGER)
+    """)
+
+    # Student Table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS students (
+        sid TEXT PRIMARY KEY,
+        name TEXT)
+    """)
+
+    # Course prerequisites
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS prerequisites (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        course_id TEXT,
+        prereq_id TEXT)
+    """)
+
+    # Registration
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS registrations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id TEXT,
+        course_id TEXT,
+        status TEXT)
+    """)
+
+    # Completed courses by students
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS completed_courses (
+        student_id TEXT,
+        course_id TEXT)
+    """)
+    crs.commit()
+
+USERNAME = 'admin'
+PASSWORD = 'admin123'
+
+# -----------------------------
+# Login System
+# -----------------------------
+def login():
+    print('==== CAMPUS COURSE REGISTRATION SYSTEM ====')
+    username = input('Enter your username: ')
+    password = input('Enter your password: ')
+    if username == USERNAME and password == PASSWORD:
+        print('\nLogin Successful! Welcome, Admin 🙂')
+        main_menu()
+    else:
+        print('Invalid username or password.')
+
+# -----------------------------
+# Main Menu
+# -----------------------------
+def main_menu():
+    while True:
+        print("\n===== MAIN MENU =====")
+        print("1. Course Management")
+        print("2. Student Management")
+        print("3. Registration Management")
+        print("4. Reports")
+        print("5. Exit")
+        choice = input('Enter your choice (1-5): ')
+        if choice == '1':
+            course_menu()
+        elif choice == '2':
+            student_menu()
+        elif choice == '3':
+            registration_menu()
+        elif choice == '4':
+            reports_menu()
+        elif choice == '5':
+            print('\nGoodbye! 👋')
+            crs.close()
+            break
+        else:
+            print('Invalid choice!')
+
+# -----------------------------
+# Course Management
+# -----------------------------
+def course_menu():
+    while True:
+        print("\n==== Course Management ====")
+        print("1. Add Course")
+        print("2. Modify Course")
+        print("3. Delete Course")
+        print("4. Back to Main Menu")
+        choice = input('Enter your choice (1-4): ')
+        if choice == '1':
+            add_course()
+        elif choice == '2':
+            modify_course()
+        elif choice == '3':
+            delete_course()
+        elif choice == '4':
+            break
+        else:
+            print('Invalid choice!')
+
+def add_course():
+    cid = input('Enter Course Code: ').strip()
+    cursor.execute("SELECT cid FROM courses WHERE cid = ?", (cid,))
+    if cursor.fetchone():
+        print('Course already exists!')
+        return
+    name = input('Enter Course Name: ')
+    cap = int(input('Enter Course Capacity: '))
+    prereq_input = input('Enter Course Prerequisites (Leave blank for no prerequisites): ')
+    prereq_input = prereq_input.strip()
+    cursor.execute("INSERT INTO courses (cid, name, capacity) VALUES (?, ?, ?)", (cid, name, cap))
+    if prereq_input:
+        prereq = [p.strip() for p in prereq_input.split(',') if p.strip()]
+        for p in prereq:
+            cursor.execute("INSERT INTO prerequisites (course_id, prereq_id) VALUES (?, ?)", (cid, p))
+    crs.commit()
+    print(f"Course '{name}' added!")
+
+def modify_course():
+    cid = input('Enter course code: ').strip()
+    cursor.execute("SELECT cid, name, capacity FROM courses WHERE cid = ?", (cid,))
+    row = cursor.fetchone()
+    if not row:
+        print('Course does not exist!')
+        return
+    cid, name, old_cap = row
+    print(f"Current capacity for {cid} - {name}: {old_cap}")
+    new_cap = int(input('Enter new Capacity: '))
+    cursor.execute(
+        "UPDATE courses SET capacity = ? WHERE cid = ?", (new_cap, cid))
+    crs.commit()
+    print('Course updated!')
+
+def delete_course():
+    cid = input('Enter course code: ').strip()
+    cursor.execute("SELECT cid FROM courses WHERE cid = ?", (cid,))
+    if not cursor.fetchone():
+        print('Course does not exist!')
+        return
+    cursor.execute("DELETE FROM registrations WHERE course_id = ?", (cid,))
+    cursor.execute("DELETE FROM prerequisites WHERE course_id = ?", (cid,))
+    cursor.execute("DELETE FROM courses WHERE cid = ?", (cid,))
+    crs.commit()
+    print('Course deleted!')
+
+# -----------------------------
+# Student Management
+# -----------------------------
+def student_menu():
+    while True:
+        print("\n==== Student Management ====")
+        print("1. Add Student Details")
+        print("2. Modify Student Details")
+        print("3. Delete Student Details")
+        print("4. Back to Main Menu")
+        choice = input('Enter your choice (1-4): ')
+        if choice == '1':
+            add_student()
+        elif choice == '2':
+            modify_student()
+        elif choice == '3':
+            delete_student()
+        elif choice == '4':
+            break
+        else:
+            print('Invalid choice!')
+
+def add_student():
+    sid = input('Enter Student ID: ').strip()
+    cursor.execute("SELECT sid FROM students WHERE sid = ?", (sid,))
+    if cursor.fetchone():
+        print('Student already exists!')
+        return
+    name = input('Enter Student Name: ').strip()
+    cursor.execute("INSERT INTO students (sid, name) VALUES (?, ?)", (sid, name))
+    crs.commit()
+    print("Student details added!")
+
+def modify_student():
+    sid = input('Enter Student ID: ').strip()
+    cursor.execute("SELECT sid, name FROM students WHERE sid = ?", (sid,))
+    row = cursor.fetchone()
+    if not row:
+        print('Student details does not exist')
+        return
+    _, old_name = row
+    print(f"Current name : {old_name}")
+    new_name = input('Enter new Student Name: ').strip()
+    cursor.execute("UPDATE students SET name = ? WHERE sid = ?", (new_name, sid))
+    crs.commit()
+    print("Student details updated!")
+
+def delete_student():
+    sid = input('Enter Student ID: ').strip()
+    cursor.execute("SELECT sid FROM students WHERE sid = ?", (sid,))
+    if not cursor.fetchone():
+        print('Student details does not exist!')
+        return
+    cursor.execute("DELETE FROM registrations WHERE student_id = ?", (sid,))
+    cursor.execute("DELETE FROM completed_courses WHERE student_id = ?", (sid,))
+    cursor.execute("DELETE FROM students WHERE sid = ?", (sid,))
+    crs.commit()
+    print("Student details deleted!")
+
+# -----------------------------
+# Registration Management
+# -----------------------------
+def registration_menu():
+    while True:
+        print("\n==== Registration Management ====")
+        print("1. Register Student for Course")
+        print("2. Drop Course")
+        print("3. Back to Main Menu")
+        choice = input('Enter your choice (1-3): ')
+        if choice == '1':
+            register_student()
+        elif choice == '2':
+            drop_course()
+        elif choice == '3':
+            break
+        else:
+            print('Invalid choice!')
+
+def register_student():
+    sid = input('Enter Student ID: ').strip()
+    cid = input('Enter Course code: ').strip()
+    cursor.execute("SELECT sid, name FROM students WHERE sid = ?", (sid,))
+    student = cursor.fetchone()
+    cursor.execute("SELECT cid, name, capacity FROM courses WHERE cid = ?", (cid,))
+    course = cursor.fetchone()
+    if not student or not course:
+        print('Invalid Student ID or Course Code!')
+        return
+    cursor.execute("SELECT prereq_id FROM prerequisites WHERE course_id = ?", (cid,))
+    prereq_rows = cursor.fetchall()
+    prereqs = [r[0] for r in prereq_rows]
+
+    if prereqs:
+        cursor.execute("SELECT course_id FROM completed_courses WHERE student_id = ?", (sid,))
+        completed_rows = cursor.fetchall()
+        completed = {r[0] for r in completed_rows}
+
+        if not all(p in completed for p in prereqs):
+            print('Student does not meet Prerequisites!')
+            return
+
+    cid_db, course_name, capacity = course
+    cursor.execute(""" SELECT status FROM registrations WHERE student_id = ? AND course_id = ? """, (sid, cid))
+    existing = cursor.fetchone()
+    if existing:
+        print('Student already registered!')
+        return
+    cursor.execute("""SELECT COUNT(*) FROM registrations WHERE course_id = ? AND status = 'registered'""", (cid,))
+    registered_count = cursor.fetchone()[0]
+    if registered_count < capacity:
+        cursor.execute("""INSERT INTO registrations (student_id, course_id, status) VALUES (?, ?, 'registered')""", (sid, cid))
+        print(f"Student {sid} registered in {cid} - {course_name}.")
+    else:
+        cursor.execute("""INSERT INTO registrations (student_id, course_id, status) VALUES (?, ?, 'waitlist')""", (sid, cid))
+        print(f"Course full. Student {sid} added to waitlist for {cid} - {course_name}.")
+    crs.commit()
+
+def drop_course():
+    sid = input("Enter Student ID: ").strip()
+    cid = input("Enter Course code: ").strip()
+    cursor.execute("""SELECT id FROM registrations WHERE student_id = ? AND course_id = ? AND status = 'registered'""", (sid, cid))
+    reg = cursor.fetchone()
+    if not reg:
+        print("Student not registered in this course.")
+        return
+
+    reg_id = reg[0]
+    cursor.execute("DELETE FROM registrations WHERE id = ?", (reg_id,))
+
+    cursor.execute("""SELECT id, student_id FROM registrations WHERE course_id = ? AND status = 'waitlist' ORDER BY id ASC LIMIT 1""", (cid,))
+    wait = cursor.fetchone()
+
+    if wait:
+        wait_id, next_sid = wait
+        cursor.execute("""UPDATE registrations SET status = 'registered' WHERE id = ?""", (wait_id,))
+        print(f"{next_sid} moved from waitlist to registered.")
+
+    crs.commit()
+    print("Course dropped successfully.")
+
+# -----------------------------
+# Reports
+# -----------------------------
+def reports_menu():
+    while True:
+        print("\n==== Reports ====")
+        print("1. Report by Course")
+        print("2. Report by Student")
+        print("3. Search Course")
+        print("4. Calculate Available Seats")
+        print("5. Back to Main Menu")
+        choice = input('Enter your choice (1-5): ')
+        if choice == '1':
+            generate_report_by_course()
+        elif choice == '2':
+            generate_report_by_student()
+        elif choice == '3':
+            search_course()
+        elif choice == '4':
+            calculate_available_seats()
+        elif choice == '5':
+            break
+        else:
+            print("Invalid choice.")
+
+def generate_report_by_course():
+    cid = input("Enter course code: ").strip()
+    cursor.execute("SELECT cid, name, capacity FROM courses WHERE cid = ?", (cid,))
+    course = cursor.fetchone()
+    if not course:
+        print("Course not found.")
+        return
+    cid, name, capacity = course
+    print(f"\nCourse: {cid} - {name} (Capacity: {capacity})")
+
+    cursor.execute("""SELECT student_id FROM registrations WHERE course_id = ? AND status = 'registered'""", (cid,))
+    registered = [row[0] for row in cursor.fetchall()]
+
+    cursor.execute("""SELECT student_id FROM registrations WHERE course_id = ? AND status = 'waitlist'""", (cid,))
+    waitlist = [row[0] for row in cursor.fetchall()]
+    print(f"Registered: {registered}")
+    print(f"Waitlist: {waitlist}")
+
+def generate_report_by_student():
+    sid = input("Enter student ID: ").strip()
+
+    cursor.execute("SELECT sid, name FROM students WHERE sid = ?", (sid,))
+    student = cursor.fetchone()
+    if not student:
+        print("Student not found.")
+        return
+
+    _, name = student
+    print(f"\nStudent: {sid} - {name}")
+
+    cursor.execute("""SELECT course_id, status FROM registrations WHERE student_id = ?""", (sid,))
+    rows = cursor.fetchall()
+
+    if not rows:
+        print("No registered courses.")
+        return
+
+    registered = [r[0] for r in rows if r[1] == 'registered']
+    waitlist = [r[0] for r in rows if r[1] == 'waitlist']
+
+    print(f"Registered courses: {registered}")
+    print(f"Waitlisted courses: {waitlist}")
+
+def search_course():
+    query = input("Enter course code or name to search: ").strip().lower()
+    like_q = f"%{query}%"
+    cursor.execute("""SELECT cid, name FROM courses WHERE LOWER(cid) LIKE ? OR LOWER(name) LIKE ?""", (like_q, like_q))
+    rows = cursor.fetchall()
+
+    if not rows:
+        print("No matching courses found.")
+        return
+
+    for row in rows:
+        cid, name = row
+        print(f"{cid} - {name}")
+
+def calculate_available_seats():
+    cid = input("Enter course code: ").strip()
+
+    cursor.execute("SELECT capacity FROM courses WHERE cid = ?", (cid,))
+    course = cursor.fetchone()
+    if not course:
+        print("Course not found.")
+        return
+    capacity = course[0]
+    cursor.execute("""SELECT COUNT(*) FROM registrations WHERE course_id = ? AND status = 'registered'""", (cid,))
+    registered = cursor.fetchone()[0]
+
+    available = capacity - registered
+    print(f"Available seats in {cid}: {available}")
+
+
+if __name__ == "__main__":
+    init_db()
+    login()
