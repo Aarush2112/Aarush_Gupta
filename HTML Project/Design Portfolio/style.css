@@ -1,5 +1,6 @@
 body{
-    background-color: #0f0f0f;
+    background-color: #0b0d10;
+    color: #e6e6e6;
     flex-wrap: wrap;
 }
 
@@ -7,7 +8,7 @@ body{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 40px;
+    padding: 22px 48px;
 }
 
 .nav-left{
