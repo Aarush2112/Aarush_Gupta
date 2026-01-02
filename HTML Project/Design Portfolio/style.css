@@ -1,3 +1,36 @@
 body{
     background-color: #0f0f0f;
+    flex-wrap: wrap;
+}
+
+.navbar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+}
+
+.nav-left{
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+.nav-left nav{
+    display: flex;
+    gap: 45px;
+}
+
+#navlogo{
+    height: 36px;
+}
+
+.navbar a{
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.nav-right a{
+    font-weight: 600;
 }
