@@ -8,13 +8,13 @@ body{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 22px 48px;
+    padding: 12px 24px;
 }
 
 .nav-left{
     display: flex;
     align-items: center;
-    gap: 60px;
+    gap: 45px;
 }
 
 .nav-left nav{
