@@ -1,7 +1,12 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body{
     background-color: #0b0d10;
     color: #e6e6e6;
-    flex-wrap: wrap;
 }
 
 .navbar{
@@ -24,12 +29,17 @@ body{
 
 #navlogo{
     height: 36px;
+    display: block;
 }
 
 .navbar a{
     color: #e6e6e6;
     text-decoration: none;
     font-weight: 500;
+}
+
+.navbar a:hover{
+    opacity: 0.8;
 }
 
 .nav-right a{
