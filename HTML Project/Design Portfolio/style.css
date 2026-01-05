@@ -51,9 +51,12 @@ body{
 
 .Projects{
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 450px));
+    gap: 50px;
+    justify-content: center;
+    margin-inline: auto;
     padding: 40px 24px;
+
 }
 
 .project-card {
