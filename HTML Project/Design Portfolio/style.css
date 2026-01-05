@@ -10,6 +10,7 @@ body{
 }
 
 .navbar{
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -30,7 +31,7 @@ body{
 }
 
 #navlogo{
-    height: 36px;
+    height: 30px;
     display: block;
 }
 
