@@ -14,17 +14,19 @@ body{
     align-items: center;
     justify-content: space-between;
     padding: 12px 24px;
+    background-color: rgba(16, 4, 57, 0.9);
+    border-bottom: 1px solid rgba(223, 217, 243, 0.9);
 }
 
 .nav-left{
     display: flex;
     align-items: center;
-    gap: 45px;
+    gap: 40px;
 }
 
 .nav-left nav{
     display: flex;
-    gap: 45px;
+    gap: 40px;
 }
 
 #navlogo{
